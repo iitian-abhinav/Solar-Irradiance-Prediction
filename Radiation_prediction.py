@@ -42,14 +42,9 @@ def load_model():
 try:
     model = load_model()
 except FileNotFoundError:
-<<<<<<< HEAD
-    st.error(
-        "❌ Model file **stacking_regressor_model.pkl** not found.  \n"
-=======
     model = None
     st.error(
-        " Model file **stacking_regressor_model.pkl** not found.  \n"
->>>>>>> e8f7c6f (Initial)
+        "❌ Model file **stacking_regressor_model.pkl** not found.  \n"
         "Place it in the same folder as this app and restart."
     )
     st.stop()
@@ -164,11 +159,6 @@ raw_input = {
     "setminute":     FIXED_SET_MINUTE,
 }
 
-<<<<<<< HEAD
-X_input    = transform_and_scale(raw_input)
-prediction = float(model.predict(X_input)[0])
-prediction = max(0.0, prediction)
-=======
 X_input = transform_and_scale(raw_input)
 if model is None:
     st.warning("No model loaded, cannot predict. Please place the pickle file and reload.")
@@ -176,7 +166,7 @@ if model is None:
 else:
     prediction = float(model.predict(X_input)[0])
     prediction = max(0.0, prediction)
->>>>>>> e8f7c6f (Initial)
+
 
 with col3:
     st.subheader("🔮 Live Prediction")
@@ -221,9 +211,5 @@ with col3:
 st.divider()
 st.caption(
     "Model: Stacking Regressor (Random Forest + Gradient Boosting + XGBoost + Ridge meta-learner)  ·  "
-<<<<<<< HEAD
-    "Dataset: HI-SEAS Weather Station Sep–Dec 2016  ·  Target: Solar Radiation (W/m²)"
-)
-=======
     "Dataset: HI-SEAS Weather Station Sep–Dec 2016  ·  Target: Solar Radiation (W/m²)")
->>>>>>> e8f7c6f (Initial)
+

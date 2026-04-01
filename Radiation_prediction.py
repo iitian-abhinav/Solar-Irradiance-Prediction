@@ -7,6 +7,7 @@ import datetime
 import warnings
 import os
 import requests
+import gdown
 warnings.filterwarnings('ignore')
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -48,20 +49,25 @@ def load_model():
     model_path = os.path.join(os.path.dirname(__file__), "stacking_regressor_model.pkl")
     if not os.path.exists(model_path):
         file_id = "1Vo-EjrAZrx1Svewo3oNLKX7CzUIO2pRe"
-        url = "https://docs.google.com/uc?export=download"
+        url = f"https://drive.google.com/uc?export=download&id={file_id}"
 
-        session = requests.Session()
-        response = session.get(url, params={"id": file_id}, stream=True)
+        try:
+            gdown.download(url, model_path, quiet=False)
+        except Exception as e:
+            # fallback to requests path if gdown fails
+            print("gdown failed, falling back to requests:", e)
 
-        token = _get_gdrive_confirm_token(response)
-        if token:
-            response = session.get(url, params={"id": file_id, "confirm": token}, stream=True)
+            session = requests.Session()
+            response = session.get("https://docs.google.com/uc?export=download", params={"id": file_id}, stream=True)
+            token = _get_gdrive_confirm_token(response)
+            if token:
+                response = session.get("https://docs.google.com/uc?export=download", params={"id": file_id, "confirm": token}, stream=True)
 
-        content_type = response.headers.get("content-type", "")
-        if "text/html" in content_type.lower():
-            raise RuntimeError("Downloaded content is not a valid pickle file. Verify the Google Drive link and sharing settings.")
+            content_type = response.headers.get("content-type", "")
+            if "text/html" in content_type.lower():
+                raise RuntimeError("Downloaded content is not a valid pickle file. Verify the Google Drive link and sharing settings.")
 
-        _save_response_content(response, model_path)
+            _save_response_content(response, model_path)
 
     with open(model_path, "rb") as f:
         return pickle.load(f)

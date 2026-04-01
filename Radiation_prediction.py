@@ -27,15 +27,42 @@ st.divider()
 # ─────────────────────────────────────────────────────────────────────────────
 # Load model
 # ─────────────────────────────────────────────────────────────────────────────
+
+def _get_gdrive_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith("download_warning"):
+            return value
+    return None
+
+
+def _save_response_content(response, destination):
+    CHUNK_SIZE = 32768
+    with open(destination, "wb") as f:
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                f.write(chunk)
+
+
 @st.cache_resource
 def load_model():
     model_path = os.path.join(os.path.dirname(__file__), "stacking_regressor_model.pkl")
     if not os.path.exists(model_path):
-        # Download from external URL (replace with your actual direct download link)
-        model_url = "https://drive.google.com/uc?export=download&id=1Vo-EjrAZrx1Svewo3oNLKX7CzUIO2pRe"
-        response = requests.get(model_url)
-        with open(model_path, "wb") as f:
-            f.write(response.content)
+        file_id = "1Vo-EjrAZrx1Svewo3oNLKX7CzUIO2pRe"
+        url = "https://docs.google.com/uc?export=download"
+
+        session = requests.Session()
+        response = session.get(url, params={"id": file_id}, stream=True)
+
+        token = _get_gdrive_confirm_token(response)
+        if token:
+            response = session.get(url, params={"id": file_id, "confirm": token}, stream=True)
+
+        content_type = response.headers.get("content-type", "")
+        if "text/html" in content_type.lower():
+            raise RuntimeError("Downloaded content is not a valid pickle file. Verify the Google Drive link and sharing settings.")
+
+        _save_response_content(response, model_path)
+
     with open(model_path, "rb") as f:
         return pickle.load(f)
 

@@ -5,6 +5,10 @@ import pickle
 from scipy import stats
 import datetime
 import warnings
+<<<<<<< HEAD
+=======
+import os
+>>>>>>> e8f7c6f (Initial)
 warnings.filterwarnings('ignore')
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -27,14 +31,25 @@ st.divider()
 # ─────────────────────────────────────────────────────────────────────────────
 @st.cache_resource
 def load_model():
+<<<<<<< HEAD
     with open("stacking_regressor_model.pkl", "rb") as f:
+=======
+    model_path = os.path.join(os.path.dirname(__file__), "stacking_regressor_model.pkl")
+    with open(model_path, "rb") as f:
+>>>>>>> e8f7c6f (Initial)
         return pickle.load(f)
 
 try:
     model = load_model()
 except FileNotFoundError:
+<<<<<<< HEAD
     st.error(
         "❌ Model file **stacking_regressor_model.pkl** not found.  \n"
+=======
+    model = None
+    st.error(
+        " Model file **stacking_regressor_model.pkl** not found.  \n"
+>>>>>>> e8f7c6f (Initial)
         "Place it in the same folder as this app and restart."
     )
     st.stop()
@@ -149,9 +164,19 @@ raw_input = {
     "setminute":     FIXED_SET_MINUTE,
 }
 
+<<<<<<< HEAD
 X_input    = transform_and_scale(raw_input)
 prediction = float(model.predict(X_input)[0])
 prediction = max(0.0, prediction)
+=======
+X_input = transform_and_scale(raw_input)
+if model is None:
+    st.warning("No model loaded, cannot predict. Please place the pickle file and reload.")
+    prediction = 0.0
+else:
+    prediction = float(model.predict(X_input)[0])
+    prediction = max(0.0, prediction)
+>>>>>>> e8f7c6f (Initial)
 
 with col3:
     st.subheader("🔮 Live Prediction")
@@ -196,5 +221,9 @@ with col3:
 st.divider()
 st.caption(
     "Model: Stacking Regressor (Random Forest + Gradient Boosting + XGBoost + Ridge meta-learner)  ·  "
+<<<<<<< HEAD
     "Dataset: HI-SEAS Weather Station Sep–Dec 2016  ·  Target: Solar Radiation (W/m²)"
 )
+=======
+    "Dataset: HI-SEAS Weather Station Sep–Dec 2016  ·  Target: Solar Radiation (W/m²)")
+>>>>>>> e8f7c6f (Initial)

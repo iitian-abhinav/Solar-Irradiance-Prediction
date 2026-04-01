@@ -32,7 +32,7 @@ def load_model():
     model_path = os.path.join(os.path.dirname(__file__), "stacking_regressor_model.pkl")
     if not os.path.exists(model_path):
         # Download from external URL (replace with your actual direct download link)
-        model_url = r"https://drive.google.com/file/d/1Vo-EjrAZrx1Svewo3oNLKX7CzUIO2pRe/view?usp=sharing"  
+        model_url = r"https://drive.google.com/file/d/1Vo-EjrAZrx1Svewo3oNLKX7CzUIO2pRe/view?usp=sharing"
         response = requests.get(model_url)
         with open(model_path, "wb") as f:
             f.write(response.content)

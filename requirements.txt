@@ -4,3 +4,5 @@ pandas
 scipy
 requests
 gdown
+scikit-learn
+joblib
